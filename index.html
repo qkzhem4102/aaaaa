@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electric Field Visualization</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.24.2/plotly.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #plot {
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Electric Field Visualization</h1>
+  <div id="plot"></div>
+  <script>
+    // Coulomb constant and charge value
+    const k = 8.99e9; // Coulomb constant
+    const q = 1e-9;   // Charge (Coulombs)
+
+    // Grid settings
+    const gridSize = 20;
+    const x = Array.from({length: gridSize}, (_, i) => -5 + i * (10 / gridSize));
+    const y = Array.from({length: gridSize}, (_, i) => -5 + i * (10 / gridSize));
+
+    // Generate vectors for electric field
+    const xField = [];
+    const yField = [];
+    const uField = [];
+    const vField = [];
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
+        const X = x[j];
+        const Y = y[i];
+        const R = Math.sqrt(X * X + Y * Y);
+        const Ex = k * q * X / Math.pow(R, 3);
+        const Ey = k * q * Y / Math.pow(R, 3);
+
+        if (R > 0) {
+          xField.push(X);
+          yField.push(Y);
+          uField.push(Ex);
+          vField.push(Ey);
+        }
+      }
+    }
+
+    // Plotly quiver plot
+    const trace = {
+      type: 'quiver',
+      x: xField,
+      y: yField,
+      u: uField,
+      v: vField,
+      scale: 5e-7,
+      name: 'Electric Field',
+    };
+
+    const layout = {
+      title: 'Electric Field Around a Point Charge',
+      xaxis: {title: 'X (m)', range: [-5, 5]},
+      yaxis: {title: 'Y (m)', range: [-5, 5]},
+      showlegend: false,
+    };
+
+    Plotly.newPlot('plot', [trace], layout);
+  </script>
+</body>
+</html>
